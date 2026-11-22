@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kazi Sharmin | Software, AI & Security</title>
+<meta name="description" content="Kazi Sharmin: final-year CSE student at BAUST. Full-stack development, deep learning research, and cybersecurity.">
+<meta name="theme-color" content="#05070d">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Kazi Sharmin | Software, AI & Security">
+<meta property="og:description" content="Full-stack developer and deep learning researcher, focusing on cybersecurity.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%2305070d'/%3E%3Ctext x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-family='monospace' font-weight='700' font-size='30' fill='%2300ff9c'%3E%3E_%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#05070d; --bg2:#0a0f1c; --panel:rgba(14,22,40,.72);
+  --green:#00ff9c; --cyan:#00d9ff; --pink:#ff2bd6; --text:#d7e3f4; --muted:#7d8ba3;
+  --border:rgba(0,255,156,.18);
+  --mono:'JetBrains Mono',monospace; --sans:'Space Grotesk',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);overflow-x:hidden;line-height:1.6}
+::selection{background:var(--green);color:#000}
+a{color:inherit;text-decoration:none}
+
+/* background layers */
+#net{position:fixed;inset:0;z-index:0}
+.scan{position:fixed;inset:0;z-index:1;pointer-events:none;
+  background:repeating-linear-gradient(0deg,rgba(0,0,0,.18) 0 1px,transparent 1px 3px);opacity:.5}
+.vignette{position:fixed;inset:0;z-index:1;pointer-events:none;
+  background:radial-gradient(ellipse at center,transparent 40%,rgba(0,0,0,.75))}
+.glow{opacity:0;position:fixed;width:420px;height:420px;border-radius:50%;pointer-events:none;z-index:1;
+  background:radial-gradient(circle,rgba(0,255,156,.10),transparent 65%);transform:translate(-50%,-50%);transition:opacity .3s}
+main,nav,footer{position:relative;z-index:2}
+
+/* boot screen */
+#boot{position:fixed;inset:0;background:#000;z-index:100;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);color:var(--green);transition:opacity .6s,visibility .6s}
+#boot.done{opacity:0;visibility:hidden}
+#bootlog{width:min(640px,90vw);font-size:14px;white-space:pre-wrap}
+#bootlog .ok{color:var(--cyan)}
+.bar{height:4px;background:#0b2;margin-top:14px;width:0;box-shadow:0 0 12px var(--green);transition:width .2s}
+
+/* nav */
+nav{position:fixed;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;
+  padding:18px 6vw;backdrop-filter:blur(10px);background:rgba(5,7,13,.55);border-bottom:1px solid var(--border);z-index:50}
+.logo{font-family:var(--mono);font-weight:800;color:var(--green)}
+.logo span{color:var(--text)}
+.links{display:flex;gap:28px;font-family:var(--mono);font-size:13px}
+.links a{color:var(--muted);transition:color .2s;position:relative}
+.links a::before{content:'./';color:var(--green);opacity:0;transition:opacity .2s}
+.links a:hover{color:var(--text)} .links a:hover::before{opacity:1}
+.burger{display:none;background:none;border:1px solid var(--border);color:var(--green);font-family:var(--mono);padding:6px 10px;cursor:pointer}
+
+/* hero */
+section{padding:110px 6vw;max-width:1250px;margin:0 auto;scroll-margin-top:60px}
+.hero{min-height:100vh;display:grid;grid-template-columns:1.1fr .9fr;gap:50px;align-items:center;padding-top:120px}
+.tag{font-family:var(--mono);color:var(--green);font-size:14px;margin-bottom:14px}
+.tag::before{content:'';display:inline-block;width:8px;height:8px;background:var(--green);border-radius:50%;margin-right:10px;
+  box-shadow:0 0 10px var(--green);animation:pulse 1.6s infinite}
+@keyframes pulse{50%{opacity:.25}}
+.glitch{font-size:clamp(44px,7vw,92px);font-weight:700;line-height:1.02;position:relative;letter-spacing:-2px}
+.glitch::before,.glitch::after{content:attr(data-text);position:absolute;left:0;top:0;width:100%;overflow:hidden}
+.glitch::before{color:var(--pink);animation:g1 3.2s infinite linear alternate-reverse;left:2px}
+.glitch::after{color:var(--cyan);animation:g2 2.6s infinite linear alternate-reverse;left:-2px}
+@keyframes g1{0%,88%{clip-path:inset(100% 0 0 0)}90%{clip-path:inset(20% 0 55% 0)}93%{clip-path:inset(60% 0 10% 0)}96%{clip-path:inset(5% 0 80% 0)}100%{clip-path:inset(100% 0 0 0)}}
+@keyframes g2{0%,85%{clip-path:inset(100% 0 0 0)}88%{clip-path:inset(70% 0 5% 0)}92%{clip-path:inset(30% 0 40% 0)}95%{clip-path:inset(85% 0 2% 0)}100%{clip-path:inset(100% 0 0 0)}}
+.grad{background:linear-gradient(90deg,var(--green),var(--cyan));-webkit-background-clip:text;background-clip:text;color:transparent}
+.typed{font-family:var(--mono);font-size:clamp(16px,2vw,22px);color:var(--cyan);margin:22px 0;min-height:1.6em}
+.typed .cur{display:inline-block;width:10px;background:var(--green);animation:blink 1s steps(1) infinite;margin-left:3px}
+@keyframes blink{50%{opacity:0}}
+.lead{color:var(--muted);max-width:540px;font-size:17px}
+.btns{display:flex;gap:16px;margin-top:34px;flex-wrap:wrap}
+.btn{display:inline-block;font-family:var(--mono);font-size:14px;padding:14px 26px;border:1px solid var(--green);color:var(--green);position:relative;overflow:hidden;z-index:0;
+  transition:color .3s;cursor:pointer;background:none}
+.btn::before{content:'';position:absolute;inset:0;background:var(--green);transform:translateX(-101%);transition:transform .3s;z-index:-1}
+.btn:hover{color:#000} .btn:hover::before{transform:translateX(0)}
+.btn.alt{border-color:var(--border);color:var(--text)}
+.btn.alt::before{background:var(--cyan)}
+
+/* terminal */
+.term{min-width:0;background:rgba(3,6,12,.9);border:1px solid var(--border);border-radius:10px;overflow:hidden;
+  box-shadow:0 0 0 1px rgba(0,217,255,.05),0 30px 80px rgba(0,0,0,.6),0 0 60px rgba(0,255,156,.08);font-family:var(--mono);font-size:13.5px}
+.term-top{display:flex;align-items:center;gap:8px;padding:11px 14px;background:rgba(255,255,255,.03);border-bottom:1px solid var(--border)}
+.dot{width:12px;height:12px;border-radius:50%}
+.term-top small{margin-left:auto;color:var(--muted)}
+.term-body{height:340px;overflow-y:auto;padding:16px;cursor:text}
+.term-body::-webkit-scrollbar{width:6px}.term-body::-webkit-scrollbar-thumb{background:var(--border)}
+.line{white-space:pre-wrap;word-break:break-word}
+.p{color:var(--green)} .c{color:var(--cyan)} .m{color:var(--muted)} .pk{color:var(--pink)}
+.inrow{display:flex;gap:8px}
+.inrow input{flex:1;min-width:0;font-size:16px;background:none;border:none;outline:none;color:var(--text);font:inherit;caret-color:var(--green)}
+
+/* section headers */
+.sh{display:flex;align-items:center;gap:16px;margin-bottom:50px}
+.sh .num{font-family:var(--mono);color:var(--green);font-size:15px}
+.sh h2{font-size:clamp(30px,4vw,46px)}
+.sh .ln{flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent)}
+
+/* reveal */
+.rv{opacity:0;transform:translateY(40px);transition:opacity .8s,transform .8s cubic-bezier(.2,.8,.2,1)}
+.rv.in{opacity:1;transform:none}
+
+/* about */
+.about{display:grid;grid-template-columns:1.2fr .8fr;gap:50px;align-items:start}
+.about p{color:var(--muted);margin-bottom:16px;font-size:17px}
+.about b{color:var(--text)}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.stat{background:var(--panel);border:1px solid var(--border);padding:22px;border-radius:10px}
+.stat .n{font-family:var(--mono);font-size:34px;font-weight:800;color:var(--green)}
+.stat .l{color:var(--muted);font-size:13px}
+
+/* skills */
+.skills{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr));gap:22px}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:26px;position:relative;overflow:hidden;
+  transition:transform .3s,border-color .3s}
+.card.rv{transition:opacity .8s,transform .5s cubic-bezier(.2,.8,.2,1),border-color .3s}
+.card::after{content:'';position:absolute;inset:0;background:radial-gradient(400px circle at var(--mx,50%) var(--my,50%),rgba(0,255,156,.10),transparent 40%);
+  opacity:0;transition:opacity .3s;pointer-events:none}
+.card:hover{border-color:rgba(0,255,156,.5)} .card:hover::after{opacity:1}
+.card h3{font-family:var(--mono);font-size:16px;margin-bottom:18px;color:var(--cyan)}
+.sk{margin-bottom:14px}
+.sk-top{display:flex;justify-content:space-between;font-size:14px;margin-bottom:6px}
+.sk-top span:last-child{font-family:var(--mono);color:var(--muted);font-size:12px}
+.track{height:5px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden}
+.fill{height:100%;width:0;background:linear-gradient(90deg,var(--green),var(--cyan));box-shadow:0 0 10px var(--green);transition:width 1.6s cubic-bezier(.2,.8,.2,1)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font-family:var(--mono);font-size:12px;padding:5px 11px;border:1px solid var(--border);border-radius:20px;color:var(--muted)}
+
+/* projects */
+.projects{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(330px,100%),1fr));gap:24px}
+.proj .ic{font-family:var(--mono);font-size:26px;color:var(--green);margin-bottom:14px}
+.proj h3{color:var(--text);font-family:var(--sans);font-size:21px;margin-bottom:10px}
+.proj p{color:var(--muted);font-size:15px;margin-bottom:18px}
+.proj{display:flex;flex-direction:column}
+.proj .row{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:auto;padding-top:18px}
+.proj .chips{margin-bottom:4px}
+.lks{display:flex;gap:16px}
+.status{font-family:var(--mono);font-size:11px;padding:4px 10px;border-radius:4px}
+.status.done{background:rgba(0,255,156,.12);color:var(--green)}
+.status.research{background:rgba(0,217,255,.12);color:var(--cyan)}
+.status.wip{background:rgba(255,43,214,.12);color:var(--pink)}
+.proj .lk{font-family:var(--mono);font-size:13px;color:var(--cyan)}
+.proj .lk:hover{text-decoration:underline}
+
+/* timeline */
+.tl{position:relative;padding-left:34px}
+.tl::before{content:'';position:absolute;left:8px;top:0;bottom:0;width:2px;background:linear-gradient(var(--green),var(--cyan),transparent)}
+.ti{position:relative;margin-bottom:40px}
+.ti::before{content:'';position:absolute;left:-32px;top:6px;width:14px;height:14px;border-radius:50%;background:var(--bg);border:2px solid var(--green);box-shadow:0 0 12px var(--green)}
+.ti .d{font-family:var(--mono);color:var(--green);font-size:13px}
+.ti h3{font-size:20px;margin:4px 0}
+.ti p{color:var(--muted)}
+
+/* contact */
+.contact{text-align:center}
+.contact h2{font-size:clamp(36px,6vw,70px);margin:14px 0}
+.contact p{color:var(--muted);max-width:520px;margin:0 auto 34px}
+.contact .tag{display:inline-block}
+.socials{display:flex;justify-content:center;gap:16px;margin-top:34px;flex-wrap:wrap}
+.socials a{font-family:var(--mono);font-size:13px;color:var(--muted);border:1px solid var(--border);padding:10px 18px;border-radius:6px;transition:all .2s}
+.socials a:hover{color:var(--green);border-color:var(--green);box-shadow:0 0 18px rgba(0,255,156,.25)}
+footer{text-align:center;padding:30px;font-family:var(--mono);font-size:12px;color:var(--muted);border-top:1px solid var(--border)}
+
+a:focus-visible,button:focus-visible{outline:2px solid var(--green);outline-offset:3px}
+@media(max-width:900px){
+  .hero{min-height:auto;padding-top:110px;gap:36px}
+  .hero,.about{grid-template-columns:1fr}
+  .links{display:none;position:absolute;top:64px;right:6vw;flex-direction:column;background:var(--bg2);padding:20px;border:1px solid var(--border)}
+  .links.open{display:flex}
+  .burger{display:block}
+  .term-body{height:280px}
+  .glow{display:none}
+}
+@media(max-width:520px){
+  section{padding:80px 5vw}
+  .glitch{letter-spacing:-1px}
+  .stats{grid-template-columns:1fr 1fr;gap:10px}
+  .stat{padding:16px}.stat .n{font-size:26px}
+  .term{font-size:12px}
+  .sh{margin-bottom:34px}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.rv{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+
+<!-- Boot screen -->
+<div id="boot" title="click to skip"><div><div id="bootlog"></div><div class="bar" id="bootbar"></div></div></div>
+
+<canvas id="net" aria-hidden="true"></canvas>
+<div class="scan"></div><div class="vignette"></div><div class="glow" id="glow"></div>
+
+<nav>
+  <a href="#top" class="logo">~/<span id="logoName">kazisharmin</span><span style="color:var(--green)">_</span></a>
+  <div class="links" id="links">
+    <a href="#about">about</a><a href="#skills">skills</a><a href="#projects">projects</a><a href="#journey">journey</a><a href="#contact">contact</a>
+  </div>
+  <button class="burger" id="burger" aria-expanded="false" aria-controls="links">menu</button>
+</nav>
+
+<main id="top">
+  <!-- HERO -->
+  <section class="hero">
+    <div>
+      <div class="tag">available for opportunities</div>
+      <h1 class="glitch" id="heroName" data-text="Kazi Sharmin">Kazi Sharmin</h1>
+      <div class="typed"><span class="m">&gt; </span><span id="typed"></span><span class="cur">&nbsp;</span></div>
+      <p class="lead" id="heroLead"></p>
+      <div class="btns">
+        <a href="#projects" class="btn">view_projects()</a>
+        <a href="#contact" class="btn alt" id="cvBtn">download_cv.pdf</a>
+      </div>
+    </div>
+    <div class="term rv" id="term">
+      <div class="term-top">
+        <span class="dot" style="background:#ff5f56"></span><span class="dot" style="background:#ffbd2e"></span><span class="dot" style="background:#27c93f"></span>
+        <small>guest@portfolio: ~</small>
+      </div>
+      <div class="term-body" id="termBody">
+        <div id="termOut"></div>
+        <div class="inrow"><span class="p">guest@portfolio:~$</span><input id="termIn" autocomplete="off" spellcheck="false" aria-label="terminal input"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="sh rv"><span class="num">01.</span><h2>whoami</h2><span class="ln"></span></div>
+    <div class="about">
+      <div class="rv" id="aboutText"></div>
+      <div class="stats rv" id="stats"></div>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section id="skills">
+    <div class="sh rv"><span class="num">02.</span><h2>Skill Tree</h2><span class="ln"></span></div>
+    <div class="skills" id="skillGrid"></div>
+  </section>
+
+  <!-- PROJECTS -->
+  <section id="projects">
+    <div class="sh rv"><span class="num">03.</span><h2>Projects</h2><span class="ln"></span></div>
+    <div class="projects" id="projGrid"></div>
+  </section>
+
+  <!-- JOURNEY -->
+  <section id="journey">
+    <div class="sh rv"><span class="num">04.</span><h2>Journey</h2><span class="ln"></span></div>
+    <div class="tl" id="timeline"></div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact" class="contact">
+    <div class="rv">
+      <div class="tag">05. establish_connection</div>
+      <h2>Let's <span class="grad">connect</span>.</h2>
+      <p>I am open to internships, junior SOC roles, and research work in cybersecurity and AI. My inbox is open.</p>
+      <a class="btn" id="mailBtn" href="mailto:ksnftaz@gmail.com">send_email()</a>
+      <div class="socials" id="socials"></div>
+    </div>
+  </section>
+</main>
+
+<footer><span id="footName">Kazi Sharmin</span> · <span id="year"></span> · <span class="p">all systems operational</span></footer>
+
+<noscript><style>#boot{display:none}.rv{opacity:1;transform:none}</style></noscript>
+<script>
+/* =====================================================
+   EDIT YOUR DETAILS HERE. You only need to change this part.
+   ===================================================== */
+const ME = {
+  name: "Kazi Sharmin",
+  handle: "kazisharmin",
+  email: "ksnftaz@gmail.com",
+  cv: "",                       // optional: put a CV PDF next to index.html and write its name here, e.g. "Kazi_Sharmin_CV.pdf". Empty = button hidden.
+  roles: ["Software Engineer","Deep Learning Researcher","Full-Stack Developer","Security-Minded Builder","Cybersecurity Learner"],
+  lead: "Final-year CSE student at BAUST (CGPA 3.79). I build full-stack apps and deep learning models with security in mind, and I am now focusing on cybersecurity.",
+  about: [
+    "Hi! I am <b>Kazi Sharmin</b>, a Computer Science and Engineering student at <b>BAUST, Saidpur</b> (CGPA <b>3.79 / 4.00</b>), graduating in <b>January 2027</b>.",
+    "My thesis is a <b>deep learning system</b> that reads printed Bangla and English math expressions from images and converts them to LaTeX. Our model reached <b>82.9%</b> (English) and <b>74.2%</b> (Bangla) exact-match accuracy, beating Tesseract, PaddleOCR and Qwen2-VL.",
+    "In my web projects I build the security parts myself: <b>JWT authentication</b>, <b>bcrypt password hashing</b>, and <b>role-based access control</b>. Now I am going deeper into <b>cybersecurity</b>: Linux, networking, and hands-on labs on TryHackMe."
+  ],
+  stats: [["3.79","CGPA out of 4.00"],["82.9%","Thesis model accuracy"],["6","Major projects"],["35","Image tools built"]],
+  skills: {
+    "Languages": ["C++","Java","Python","JavaScript","C#","SQL","PHP","HTML/CSS"],
+    "Web": ["React","Node.js","Express","Flask","ASP.NET MVC","Tailwind CSS","REST APIs","JWT"],
+    "ML & Computer Vision": ["PyTorch","timm","Hugging Face","OpenCV","NumPy","pandas"],
+    "Mobile & Cloud": ["Android (Java)","Firebase","Vercel","Netlify"],
+    "Databases & Tools": ["MySQL","SQL Server","Git","GitHub","Linux","VS Code"],
+    "Security (learning now)": ["Auth & password hashing","Access control","Linux","Networking","TryHackMe"]
+  },
+  // link = GitHub repo (leave "" to hide the button), demo = live site or video (optional)
+  projects: [
+    {icon:"[AI]", title:"Bilingual Math Expression Recognition", desc:"Undergraduate thesis. Converts images of Bangla and English math into LaTeX. Encoder-decoder models (ResNet, EfficientNet, ConvNeXt, Swin + Transformer) on an 8,776-image dataset we built. Best baseline got under 1% on Bangla; ours got 74.2%.", tags:["PyTorch","Hugging Face","Deep Learning"], status:"research", link:""},
+    {icon:"[◐]", title:"Digital Image Processing Toolkit", desc:"35 image-processing tools with theory and code, shipped on three platforms: Flask web app, OpenCV.js browser version on Netlify, and an offline Android app. 44 of 47 browser outputs match Python within one grey level.", tags:["Python","Flask","OpenCV","Android"], status:"done", link:"https://github.com/kazisharmin/Project_dip", demo:"https://digitalimageprocessingapp.netlify.app"},
+    {icon:"[#]", title:"Public Allegation Portal", desc:"Full-stack platform for public and anonymous complaints. REST API over a 10-table MySQL schema with JWT auth, bcrypt hashing and file uploads. React 19 frontend, deployed on Vercel.", tags:["React","Node.js","MySQL","JWT"], status:"done", link:""},
+    {icon:"[⌂]", title:"Visitor Entry System", desc:"Multi-tenant web app for visitor check-in and check-out. Role-based access control for admins and receptionists, BCrypt hashing, session authentication, EF Core migrations.", tags:["C#","ASP.NET Core","SQL Server"], status:"done", link:""},
+    {icon:"[✉]", title:"Classroom Communication App", desc:"Android app inspired by Google Classroom. Firebase Auth, Firestore and Cloud Messaging for push reminders, Cloudinary storage and an in-app PDF viewer.", tags:["Java","Android","Firebase"], status:"done", link:""},
+    {icon:"[~]", title:"Computer Graphics with OpenGL", desc:"DDA and Bresenham algorithms from scratch, plus Ghost Blob: an interactive character that runs from your cursor, jumps and bursts into particles.", tags:["Python","PyOpenGL"], status:"done", link:"https://github.com/kazisharmin/Animation-Games", demo:"https://youtu.be/6naQWmIywVQ"}
+  ],
+  journey: [
+    ["2017 to 2020","SSC & HSC (Science), GPA 5.00 / 5.00","Cantonment Public School and College, Saidpur."],
+    ["2023 to 2027","B.Sc. in CSE, BAUST Saidpur","CGPA 3.79 / 4.00. Full-stack, Android, graphics and database projects."],
+    ["2026","Deep learning thesis","Bilingual math expression recognition with PyTorch, beating existing OCR tools on Bangla."],
+    ["Now","Cybersecurity","Linux, networking, Python for security, and hands-on labs on TryHackMe."],
+    ["Next","Junior security role","Bringing development and ML skills to protecting real systems."]
+  ],
+  socials: [["GitHub","https://github.com/kazisharmin"],["LinkedIn","https://www.linkedin.com/in/kazi-sharmin-8284a928b"]]
+};
+/* ===================== END OF EDIT AREA ===================== */
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const ext = u => `href="${esc(u)}" target="_blank" rel="noopener noreferrer"`;
+
+/* ---------- fill page from ME ---------- */
+document.title = `${ME.name} | Software, AI & Security`;
+$('#heroName').textContent = ME.name; $('#heroName').dataset.text = ME.name;
+$('#logoName').textContent = ME.handle; $('#footName').textContent = ME.name;
+$('#year').textContent = new Date().getFullYear();
+$('#heroLead').textContent = ME.lead;
+if (ME.cv) { $('#cvBtn').href = ME.cv; $('#cvBtn').setAttribute('download',''); } else { $('#cvBtn').remove(); }
+$('#mailBtn').href = 'mailto:' + ME.email;
+$('#aboutText').innerHTML = ME.about.map(p => `<p>${p}</p>`).join('');
+$('#stats').innerHTML = ME.stats.map(([n,l]) => `<div class="stat"><div class="n" data-count="${esc(n)}">${esc(n)}</div><div class="l">${l}</div></div>`).join('');
+$('#skillGrid').innerHTML = Object.entries(ME.skills).map(([cat,list]) =>
+  `<div class="card rv"><h3>// ${cat}</h3><div class="chips">${list.map(t=>`<span class="chip">${t}</span>`).join('')}</div></div>`
+).join('');
+const STATUS = {done:'● completed', research:'◆ research · ongoing', wip:'◐ in progress'};
+$('#projGrid').innerHTML = ME.projects.map(p => {
+  const links = [p.demo && `<a class="lk" ${ext(p.demo)}>live ↗</a>`, p.link && `<a class="lk" ${ext(p.link)}>source →</a>`].filter(Boolean).join('');
+  return `<div class="card proj rv"><div class="ic">${p.icon}</div><h3>${p.title}</h3><p>${p.desc}</p>
+   <div class="chips">${p.tags.map(t=>`<span class="chip">${t}</span>`).join('')}</div>
+   <div class="row"><span class="status ${p.status}">${STATUS[p.status] || p.status}</span><span class="lks">${links}</span></div></div>`;
+}).join('');
+$('#timeline').innerHTML = ME.journey.map(([d,h,p]) => `<div class="ti rv"><div class="d">${d}</div><h3>${h}</h3><p>${p}</p></div>`).join('');
+$('#socials').innerHTML = ME.socials.map(([n,u]) => `<a ${ext(u)}>${n}</a>`).join('');
+
+/* ---------- terminal ---------- */
+const out = $('#termOut'), inp = $('#termIn'), body = $('#termBody');
+const hist = []; let hi = 0, introOn = false, introTimers = [];
+function print(html){ const d = document.createElement('div'); d.className = 'line'; d.innerHTML = html; out.appendChild(d); body.scrollTop = body.scrollHeight; }
+let altTheme = false;
+const CMDS = {
+  help: () => `<span class="c">available commands:</span>
+  <span class="p">whoami</span>          who I am
+  <span class="p">skills</span>          what I know
+  <span class="p">projects</span>        what I built
+  <span class="p">contact</span>         how to reach me
+  <span class="p">goto</span> &lt;section&gt;  about | skills | projects | journey | contact
+  <span class="p">matrix</span>          toggle color theme
+  <span class="p">clear</span>           clear the screen`,
+  whoami: () => `${esc(ME.name)} — ${esc(ME.roles[0])}\n<span class="m">${esc(ME.lead)}</span>`,
+  skills: () => Object.entries(ME.skills).map(([k,v]) => `<span class="c">${k}:</span> ${v.join(', ')}`).join('\n'),
+  projects: () => ME.projects.map(p => `<span class="p">${p.icon}</span> ${p.title} <span class="${p.status==='done'?'p':'c'}">(${STATUS[p.status]||p.status})</span>`).join('\n'),
+  contact: () => `email: <a class="c" href="mailto:${esc(ME.email)}">${esc(ME.email)}</a>\n` + ME.socials.map(([n,u])=>`${n.toLowerCase()}: <a class="c" ${ext(u)}>${esc(u)}</a>`).join('\n'),
+  ls: () => 'about/  skills/  projects/  journey/  contact/  <span class="pk">secrets.txt</span>',
+  'cat secrets.txt': () => '<span class="pk">permission denied.</span> nice try :) only legal hacking here.',
+  matrix: () => { altTheme = !altTheme; document.documentElement.style.setProperty('--cyan', altTheme ? '#00ff9c' : '#00d9ff'); return 'theme toggled.'; },
+  clear: () => { out.innerHTML = ''; return null; }
+};
+function run(raw){
+  const cmd = raw.trim().replace(/\s+/g,' '); const low = cmd.toLowerCase();
+  print(`<span class="p">guest@portfolio:~$</span> ${esc(cmd)}`);
+  if (!cmd) return;
+  hist.push(cmd); hi = hist.length;
+  let res;
+  if (low.startsWith('goto')) {
+    const id = low.slice(4).trim(), s = ['about','skills','projects','journey','contact'].includes(id) && document.getElementById(id);
+    res = s ? (s.scrollIntoView({behavior: reduceMotion ? 'auto' : 'smooth'}), `navigating to ${id}...`) : 'usage: goto about | skills | projects | journey | contact';
+  }
+  else if (low === 'sudo' || low.startsWith('sudo ')) res = '<span class="pk">guest is not in the sudoers file. This incident will be reported.</span>';
+  else res = CMDS[low] ? CMDS[low]() : `<span class="pk">command not found:</span> ${esc(cmd)}. type <span class="p">help</span>`;
+  if (res) print(res);
+}
+function stopIntro(){ if (!introOn) return; introOn = false; introTimers.forEach(clearTimeout); introTimers = []; inp.value = ''; }
+inp.addEventListener('keydown', e => {
+  if (introOn) stopIntro();
+  if (e.key === 'Enter') { e.preventDefault(); run(inp.value); inp.value = ''; }
+  else if (e.key === 'ArrowUp') { e.preventDefault(); if (hi > 0) inp.value = hist[--hi]; }
+  else if (e.key === 'ArrowDown') { e.preventDefault(); hi = Math.min(hist.length, hi+1); inp.value = hist[hi] || ''; }
+  else if (e.key === 'Tab') { e.preventDefault(); const v = inp.value.toLowerCase(); const m = Object.keys(CMDS).concat('goto ').find(k => v && k.startsWith(v)); if (m) inp.value = m; }
+});
+inp.addEventListener('focus', stopIntro);
+body.addEventListener('click', e => { if (!e.target.closest('a')) inp.focus({preventScroll:true}); });
+function startTerm(){
+  print('<span class="m">Last login: ' + new Date().toDateString() + ' from 127.0.0.1</span>');
+  if (reduceMotion) { run('whoami'); run('help'); return; }
+  introOn = true; const intro = ['whoami','help']; let k = 0;
+  const later = (fn, ms) => introTimers.push(setTimeout(() => introOn && fn(), ms));
+  (function next(){
+    if (k >= intro.length) { introOn = false; return; }
+    const c = intro[k++]; let j = 0;
+    (function type(){ inp.value = c.slice(0, ++j); if (j < c.length) later(type, 70); else later(() => { inp.value = ''; run(c); later(next, 500); }, 250); })();
+  })();
+}
+
+/* ---------- boot sequence (once per visit, click to skip) ---------- */
+(function boot(){
+  const box = $('#boot'), log = $('#bootlog'), bar = $('#bootbar');
+  let seen = false; try { seen = sessionStorage.getItem('booted') === '1'; } catch(e) {}
+  let finished = false;
+  const finish = () => { if (finished) return; finished = true; box.classList.add('done'); try { sessionStorage.setItem('booted','1'); } catch(e) {} startTerm(); };
+  if (seen || reduceMotion) { box.classList.add('done'); finished = true; startTerm(); return; }
+  const lines = ["[ BIOS ] initializing secure kernel...","[  OK  ] mounting /dev/portfolio","[  OK  ] loading modules: python pytorch linux networking",
+    "[  OK  ] firewall rules applied","[  OK  ] establishing encrypted session","[ DONE ] welcome, guest."];
+  let i = 0;
+  const t = setInterval(() => {
+    if (finished) return clearInterval(t);
+    log.innerHTML += lines[i].replace(/\[(.*?)\]/, '<span class="ok">[$1]</span>') + '\n';
+    bar.style.width = ((i+1)/lines.length*100) + '%';
+    if (++i >= lines.length) { clearInterval(t); setTimeout(finish, 450); }
+  }, 230);
+  box.addEventListener('click', finish);
+  addEventListener('keydown', function k(){ finish(); removeEventListener('keydown', k); });
+})();
+
+/* ---------- typing roles ---------- */
+(function type(){
+  const el = $('#typed'); let r = 0, c = 0, del = false;
+  if (reduceMotion) { el.textContent = ME.roles.join(' · '); return; }
+  (function tick(){
+    const w = ME.roles[r]; el.textContent = w.slice(0, c);
+    if (!del && c === w.length) { del = true; return setTimeout(tick, 1600); }
+    if (del && c === 0) { del = false; r = (r+1) % ME.roles.length; }
+    c += del ? -1 : 1; setTimeout(tick, del ? 35 : 75);
+  })();
+})();
+
+/* ---------- scroll reveal + counters ---------- */
+function countUp(n){
+  const raw = n.dataset.count, target = parseFloat(raw);
+  if (isNaN(target) || reduceMotion) { n.textContent = raw; return; }
+  const suffix = raw.replace(/^[\d.]+/, ''), dec = ((raw.match(/^\d+\.(\d+)/)||[])[1]||'').length; let k = 0;
+  n.textContent = (0).toFixed(dec) + suffix;
+  const t = setInterval(() => { k++; n.textContent = (k >= 40 ? raw : (target*k/40).toFixed(dec) + suffix); if (k >= 40) clearInterval(t); }, 30);
+}
+const showAll = () => document.querySelectorAll('.rv').forEach(el => { el.classList.add('in'); el.querySelectorAll('[data-count]').forEach(countUp); });
+if ('IntersectionObserver' in window && !reduceMotion) {
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (!e.isIntersecting) return;
+    e.target.classList.add('in');
+    e.target.querySelectorAll('[data-count]').forEach(countUp);
+    io.unobserve(e.target);
+  }), {threshold: 0.1, rootMargin: '0px 0px -40px 0px'});
+  document.querySelectorAll('.rv').forEach(el => io.observe(el));
+} else showAll();
+
+/* ---------- card tilt + spotlight (mouse devices only) ---------- */
+const finePointer = matchMedia('(hover: hover) and (pointer: fine)').matches;
+if (finePointer && !reduceMotion) document.querySelectorAll('.card').forEach(c => {
+  c.addEventListener('mousemove', e => {
+    const r = c.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top;
+    c.style.setProperty('--mx', x+'px'); c.style.setProperty('--my', y+'px');
+    c.style.transform = `perspective(800px) rotateX(${(y/r.height-.5)*-6}deg) rotateY(${(x/r.width-.5)*6}deg) translateY(-4px)`;
+  });
+  c.addEventListener('mouseleave', () => c.style.transform = '');
+});
+
+/* ---------- cursor glow ---------- */
+const glow = $('#glow');
+if (finePointer) addEventListener('mousemove', e => { glow.style.opacity = 1; glow.style.left = e.clientX+'px'; glow.style.top = e.clientY+'px'; }, {passive:true});
+document.addEventListener('mouseleave', () => glow.style.opacity = 0);
+
+/* ---------- mobile menu ---------- */
+const burger = $('#burger'), links = $('#links');
+const setMenu = open => { links.classList.toggle('open', open); burger.setAttribute('aria-expanded', open); burger.textContent = open ? 'close' : 'menu'; };
+burger.onclick = e => { e.stopPropagation(); setMenu(!links.classList.contains('open')); };
+links.querySelectorAll('a').forEach(a => a.onclick = () => setMenu(false));
+document.addEventListener('click', e => { if (links.classList.contains('open') && !e.target.closest('nav')) setMenu(false); });
+addEventListener('keydown', e => { if (e.key === 'Escape') setMenu(false); });
+
+/* ---------- network canvas background ---------- */
+(function net(){
+  const cv = $('#net'), ctx = cv.getContext('2d');
+  let W = 0, H = 0, pts = [], mouse = {x:-9999, y:-9999}, running = true;
+  const glyphs = '01<>/{}#$;:'.split('');
+  const make = (n) => Array.from({length:n}, () => ({x:Math.random()*W, y:Math.random()*H, vx:(Math.random()-.5)*.4, vy:(Math.random()-.5)*.4,
+    g: Math.random() < .18 ? glyphs[Math.floor(Math.random()*glyphs.length)] : null}));
+  function size(){
+    const dpr = Math.min(devicePixelRatio || 1, 2), oldW = W;
+    W = innerWidth; H = innerHeight;
+    cv.width = W*dpr; cv.height = H*dpr; cv.style.width = W+'px'; cv.style.height = H+'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0); ctx.font = '12px "JetBrains Mono", monospace';
+    const n = Math.max(25, Math.min(W < 700 ? 45 : 100, Math.floor(W*H/15000)));
+    if (!pts.length || Math.abs(W-oldW) > 80) pts = make(n);           // rebuild only on real width change (not mobile URL bar)
+    pts.forEach(p => { p.x = Math.min(p.x, W); p.y = Math.min(p.y, H); });
+  }
+  size();
+  let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(size, 150); });
+  addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; }, {passive:true});
+  document.addEventListener('mouseleave', () => { mouse.x = mouse.y = -9999; });
+  document.addEventListener('visibilitychange', () => { running = !document.hidden; if (running) requestAnimationFrame(draw); });
+  if (document.fonts) document.fonts.ready.then(() => ctx.font = '12px "JetBrains Mono", monospace');
+  function draw(){
+    if (!running) return;
+    ctx.clearRect(0,0,W,H);
+    for (const p of pts) {
+      if (!reduceMotion) {
+        p.x += p.vx; p.y += p.vy;
+        const dx = p.x - mouse.x, dy = p.y - mouse.y, dm = Math.hypot(dx, dy);
+        if (dm > 0.5 && dm < 140) { p.x += dx/dm*.8; p.y += dy/dm*.8; }
+        if (p.x < 0) { p.x = 0; p.vx = Math.abs(p.vx); } else if (p.x > W) { p.x = W; p.vx = -Math.abs(p.vx); }
+        if (p.y < 0) { p.y = 0; p.vy = Math.abs(p.vy); } else if (p.y > H) { p.y = H; p.vy = -Math.abs(p.vy); }
+      }
+      if (p.g) { ctx.fillStyle = 'rgba(0,255,156,.5)'; ctx.fillText(p.g, p.x, p.y); }
+      else { ctx.fillStyle = 'rgba(0,217,255,.7)'; ctx.beginPath(); ctx.arc(p.x, p.y, 1.6, 0, Math.PI*2); ctx.fill(); }
+    }
+    ctx.lineWidth = 1;
+    for (let i = 0; i < pts.length; i++) for (let j = i+1; j < pts.length; j++) {
+      const a = pts[i], b = pts[j], dx = a.x-b.x, dy = a.y-b.y; if (dx > 130 || dx < -130 || dy > 130 || dy < -130) continue;
+      const d = Math.hypot(dx, dy);
+      if (d < 130) { ctx.strokeStyle = `rgba(0,255,156,${(1-d/130)*.22})`; ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke(); }
+    }
+    if (!reduceMotion) requestAnimationFrame(draw);
+  }
+  draw();
+})();
+</script>
+</body>
+</html>
