@@ -2,8 +2,7 @@
 
 Personal portfolio site: full-stack development, deep learning research, and cybersecurity.
 
-**Live:** 
-portfolio-of-zahra.netlify.app
+**Live:** portfolio-of-zahra.netlify.app
 
 ## Features
 - Interactive terminal (try `help`, `whoami`, `projects`, `goto contact`)
