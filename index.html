@@ -160,6 +160,23 @@ section{padding:110px 6vw;max-width:1250px;margin:0 auto;scroll-margin-top:60px}
 .contact h2{font-size:clamp(36px,6vw,70px);margin:14px 0}
 .contact p{color:var(--muted);max-width:520px;margin:0 auto 34px}
 .contact .tag{display:inline-block}
+.cform{max-width:620px;margin:0 auto;text-align:left;background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:26px}
+.cform label{display:block;margin-bottom:16px}
+.cform label span{display:block;font-family:var(--mono);font-size:12px;color:var(--green);margin-bottom:6px}
+.cform label span::before{content:'$ '}
+.cform input,.cform textarea{width:100%;background:rgba(3,6,12,.8);border:1px solid var(--border);border-radius:6px;color:var(--text);font:15px var(--sans);padding:12px 14px;outline:none;transition:border-color .2s,box-shadow .2s;resize:vertical}
+.cform input:focus,.cform textarea:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(0,255,156,.12)}
+.cf-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.cform .btn{width:100%;margin-top:4px}
+.cform .btn:disabled{opacity:.5;cursor:wait}
+.cf-status{font-family:var(--mono);font-size:13px;margin-top:14px;min-height:1.2em;text-align:center}
+.cf-status.ok{color:var(--green)} .cf-status.err{color:var(--pink)}
+.hp{position:absolute!important;left:-9999px!important;height:0;overflow:hidden}
+.mailrow a{font-size:12px;color:var(--cyan)} .mailrow a:hover{text-decoration:underline}
+@media(max-width:520px){.cf-row{grid-template-columns:1fr;gap:0}.cform{padding:18px}}
+.mailrow{display:flex;justify-content:center;align-items:center;gap:12px;margin-top:22px;font-family:var(--mono);font-size:15px;color:var(--text);flex-wrap:wrap}
+.mailrow button{font:inherit;font-size:12px;background:none;border:1px solid var(--border);color:var(--green);padding:5px 12px;border-radius:5px;cursor:pointer;transition:all .2s}
+.mailrow button:hover{border-color:var(--green);box-shadow:0 0 14px rgba(0,255,156,.25)}
 .socials{display:flex;justify-content:center;gap:16px;margin-top:34px;flex-wrap:wrap}
 .socials a{font-family:var(--mono);font-size:13px;color:var(--muted);border:1px solid var(--border);padding:10px 18px;border-radius:6px;transition:all .2s}
 .socials a:hover{color:var(--green);border-color:var(--green);box-shadow:0 0 18px rgba(0,255,156,.25)}
@@ -259,8 +276,21 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--green);outline-offs
     <div class="rv">
       <div class="tag">05. establish_connection</div>
       <h2>Let's <span class="grad">connect</span>.</h2>
-      <p>I am open to internships, junior SOC roles, and research work in cybersecurity and AI. My inbox is open.</p>
-      <a class="btn" id="mailBtn" href="mailto:ksnftaz@gmail.com">send_email()</a>
+      <p>I am open to internships, junior SOC roles, and research work in cybersecurity and AI. Send me a message below.</p>
+
+      <form class="cform" id="contactForm" name="contact" method="POST" action="/" data-netlify="true" netlify-honeypot="bot-field">
+        <input type="hidden" name="form-name" value="contact">
+        <p class="hp" aria-hidden="true"><label>Leave this empty: <input name="bot-field" tabindex="-1" autocomplete="off"></label></p>
+        <div class="cf-row">
+          <label><span>name</span><input name="name" required maxlength="100" autocomplete="name" placeholder="Your name"></label>
+          <label><span>email</span><input name="email" type="email" required maxlength="150" autocomplete="email" placeholder="you@company.com"></label>
+        </div>
+        <label><span>message</span><textarea name="message" required maxlength="3000" rows="5" placeholder="Hi Kazi, ..."></textarea></label>
+        <button class="btn" type="submit" id="sendBtn">transmit_message()</button>
+        <div class="cf-status" id="cfStatus" role="status" aria-live="polite"></div>
+      </form>
+
+      <div class="mailrow"><span class="m">or email:</span> <span id="mailText">[enable JavaScript to see email]</span><button id="copyMail" type="button">copy</button><a id="mailBtn" href="#contact">open mail app ↗</a></div>
       <div class="socials" id="socials"></div>
     </div>
   </section>
@@ -276,7 +306,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--green);outline-offs
 const ME = {
   name: "Kazi Sharmin",
   handle: "kazisharmin",
-  email: "ksnftaz@gmail.com",
+  email: ["ksnftaz", "gmail.com"],   // [name, domain]: kept in two parts so spam bots cannot read it from the source
   cv: "",                       // optional: put a CV PDF next to index.html and write its name here, e.g. "Kazi_Sharmin_CV.pdf". Empty = button hidden.
   roles: ["Software Engineer","Deep Learning Researcher","Full-Stack Developer","Security-Minded Builder","Cybersecurity Learner"],
   lead: "Final-year CSE student at BAUST (CGPA 3.79). I build full-stack apps and deep learning models with security in mind, and I am now focusing on cybersecurity.",
@@ -326,7 +356,31 @@ $('#logoName').textContent = ME.handle; $('#footName').textContent = ME.name;
 $('#year').textContent = new Date().getFullYear();
 $('#heroLead').textContent = ME.lead;
 if (ME.cv) { $('#cvBtn').href = ME.cv; $('#cvBtn').setAttribute('download',''); } else { $('#cvBtn').remove(); }
-$('#mailBtn').href = 'mailto:' + ME.email;
+const EMAIL = ME.email.join('@');                        // joined only in the visitor's browser
+$('#mailBtn').href = 'mailto:' + EMAIL;
+$('#mailText').textContent = EMAIL;
+$('#copyMail').onclick = async () => {
+  const btn = $('#copyMail'); let ok = false;
+  try { await navigator.clipboard.writeText(EMAIL); ok = true; }
+  catch (e) { const t = document.createElement('textarea'); t.value = EMAIL; t.style.position = 'fixed'; t.style.opacity = '0'; document.body.appendChild(t); t.select();
+    try { ok = document.execCommand('copy'); } catch (e2) {} t.remove(); }
+  btn.textContent = ok ? 'copied ✓' : 'select & copy'; setTimeout(() => btn.textContent = 'copy', 1800);
+};
+/* contact form -> Netlify Forms (sent in the background, no page reload) */
+$('#contactForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const f = e.target, st = $('#cfStatus'), btn = $('#sendBtn');
+  if (f['bot-field'].value) return;                       // honeypot filled = bot
+  btn.disabled = true; st.className = 'cf-status'; st.textContent = 'encrypting... transmitting...';
+  try {
+    const r = await fetch('/', {method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body:new URLSearchParams(new FormData(f)).toString()});
+    if (!r.ok) throw new Error(r.status);
+    f.reset(); st.className = 'cf-status ok'; st.textContent = '✓ message delivered. I will reply soon.';
+  } catch (err) {
+    st.className = 'cf-status err'; st.textContent = '✗ could not send. Please email me directly: ' + EMAIL;
+  }
+  btn.disabled = false;
+});
 $('#aboutText').innerHTML = ME.about.map(p => `<p>${p}</p>`).join('');
 $('#stats').innerHTML = ME.stats.map(([n,l]) => `<div class="stat"><div class="n" data-count="${esc(n)}">${esc(n)}</div><div class="l">${l}</div></div>`).join('');
 $('#skillGrid').innerHTML = Object.entries(ME.skills).map(([cat,list]) =>
@@ -359,7 +413,7 @@ const CMDS = {
   whoami: () => `${esc(ME.name)} — ${esc(ME.roles[0])}\n<span class="m">${esc(ME.lead)}</span>`,
   skills: () => Object.entries(ME.skills).map(([k,v]) => `<span class="c">${k}:</span> ${v.join(', ')}`).join('\n'),
   projects: () => ME.projects.map(p => `<span class="p">${p.icon}</span> ${p.title} <span class="${p.status==='done'?'p':'c'}">(${STATUS[p.status]||p.status})</span>`).join('\n'),
-  contact: () => `email: <a class="c" href="mailto:${esc(ME.email)}">${esc(ME.email)}</a>\n` + ME.socials.map(([n,u])=>`${n.toLowerCase()}: <a class="c" ${ext(u)}>${esc(u)}</a>`).join('\n'),
+  contact: () => `email: <a class="c" href="mailto:${esc(EMAIL)}">${esc(EMAIL)}</a>\n` + ME.socials.map(([n,u])=>`${n.toLowerCase()}: <a class="c" ${ext(u)}>${esc(u)}</a>`).join('\n'),
   ls: () => 'about/  skills/  projects/  journey/  contact/  <span class="pk">secrets.txt</span>',
   'cat secrets.txt': () => '<span class="pk">permission denied.</span> nice try :) only legal hacking here.',
   matrix: () => { altTheme = !altTheme; document.documentElement.style.setProperty('--cyan', altTheme ? '#00ff9c' : '#00d9ff'); return 'theme toggled.'; },
