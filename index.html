@@ -306,7 +306,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--green);outline-offs
 const ME = {
   name: "Kazi Sharmin",
   handle: "kazisharmin",
-  email: ["ksnftaz", "gmail.com"],   // [name, domain]: kept in two parts so spam bots cannot read it from the source
+  email: ["kazi.sharmin.nahar.zahra", "gmail.com"],   // [name, domain]: kept in two parts so spam bots cannot read it from the source
   cv: "",                       // optional: put a CV PDF next to index.html and write its name here, e.g. "Kazi_Sharmin_CV.pdf". Empty = button hidden.
   roles: ["Software Engineer","Deep Learning Researcher","Full-Stack Developer","Security-Minded Builder","Cybersecurity Learner"],
   lead: "Final-year CSE student at BAUST (CGPA 3.79). I build full-stack apps and deep learning models with security in mind, and I am now focusing on cybersecurity.",
@@ -330,15 +330,15 @@ const ME = {
     {icon:"[◐]", title:"Digital Image Processing Toolkit", desc:"35 image-processing tools with theory and code, shipped on three platforms: Flask web app, OpenCV.js browser version on Netlify, and an offline Android app. 44 of 47 browser outputs match Python within one grey level.", tags:["Python","Flask","OpenCV","Android"], status:"done", link:"https://github.com/kazisharmin/Project_dip", demo:"https://digitalimageprocessingapp.netlify.app"},
     {icon:"[#]", title:"Public Allegation Portal", desc:"Full-stack platform for public and anonymous complaints. REST API over a 10-table MySQL schema with JWT auth, bcrypt hashing and file uploads. React 19 frontend, deployed on Vercel.", tags:["React","Node.js","Express","MySQL","JWT"], status:"done", link:"https://github.com/kazisharmin/Public-Allegation-Portal", demo:"https://public-allegation-portal-five.vercel.app"},
     {icon:"[⌂]", title:"Visitor Entry System", desc:"Web app for visitor check-in and check-out. Session-based login, admin role checks, and each admin account sees only its own visitor records.", tags:["C#","ASP.NET Core MVC","EF Core","SQL Server"], status:"done", link:"https://github.com/kazisharmin/VisitorEntrySystem"},
-    {icon:"[✉]", title:"Classroom Communication App", desc:"Android app inspired by Google Classroom. Firebase Auth, Firestore and Cloud Messaging for push reminders, Cloudinary storage and an in-app PDF viewer.", tags:["Java","Android","Firebase"], status:"done", link:"https://github.com/kazisharmin/Acado"},
+    {icon:"[✉]", title:"Classroom Communication App", desc:"Android app inspired by Google Classroom. Firebase Auth, Firestore and Cloud Messaging for push reminders, Cloudinary storage and an in-app PDF viewer.", tags:["Java","Android","Firebase"], status:"done", link:"https://github.com/kazisharmin/Acado", demo:"https://youtu.be/k8GqkW6HNAc"},
     {icon:"[~]", title:"Computer Graphics with OpenGL", desc:"DDA and Bresenham algorithms from scratch, plus Ghost Blob: an interactive character that runs from your cursor, jumps and bursts into particles.", tags:["Python","PyOpenGL"], status:"done", link:"https://github.com/kazisharmin/Animation-Games", demo:"https://youtu.be/6naQWmIywVQ"}
   ],
   journey: [
     ["2017 to 2020","SSC & HSC (Science), GPA 5.00 / 5.00","Cantonment Public School and College, Saidpur."],
     ["2023 to 2027","B.Sc. in CSE, BAUST Saidpur","CGPA 3.79 / 4.00. Full-stack, Android, graphics and database projects. Relevant coursework:",
     ["Data Structures & Algorithms","Discrete Mathematics","Operating Systems","Computer Networks","Data Communication","Database Systems","Cyber Security","Artificial Intelligence","Machine Learning","Digital Image Processing","Computer Graphics"]],
-    ["Dec 2025 to Jan 2026","Industrial training, Nilsagor Group (IT Department)","21 days in Dhaka: ..."],
-    ["2026","Deep learning thesis","Bilingual math expression recognition ..."],
+    ["Dec 2025 to Jan 2026","Industrial training, Nilsagor Group (IT Department)","21 days in Dhaka: PC troubleshooting, Windows installation, LAN cabling and RJ45 crimping, MikroTik router setup (DHCP, NAT), and a Windows Server demonstration."],
+    ["2026","Deep learning thesis","Bilingual math expression recognition with PyTorch, beating existing OCR tools on Bangla."],
     ["Now","Job-ready developer","Polishing my full-stack (React, Node.js, MySQL) and Android projects."],
     ["Next","Junior software engineer role","Shipping real products with a team and learning from experienced engineers."]
   ],
@@ -390,12 +390,12 @@ $('#skillGrid').innerHTML = Object.entries(ME.skills).map(([cat,list]) =>
 ).join('');
 const STATUS = {done:'● completed', research:'◆ research · ongoing', wip:'◐ in progress'};
 $('#projGrid').innerHTML = ME.projects.map(p => {
-  const links = [p.demo && `<a class="lk" ${ext(p.demo)}>live ↗</a>`, p.link && `<a class="lk" ${ext(p.link)}>source →</a>`].filter(Boolean).join('');
+  const links = [p.demo && `<a class="lk" ${ext(p.demo)}>${/youtu\.?be/.test(p.demo) ? 'video ▶' : 'live ↗'}</a>`, p.link && `<a class="lk" ${ext(p.link)}>source →</a>`].filter(Boolean).join('');
   return `<div class="card proj rv"><div class="ic">${p.icon}</div><h3>${p.title}</h3><p>${p.desc}</p>
    <div class="chips">${p.tags.map(t=>`<span class="chip">${t}</span>`).join('')}</div>
    <div class="row"><span class="status ${p.status}">${STATUS[p.status] || p.status}</span><span class="lks">${links}</span></div></div>`;
 }).join('');
-$('#timeline').innerHTML = ME.journey.map(([d,h,p]) => `<div class="ti rv"><div class="d">${d}</div><h3>${h}</h3><p>${p}</p></div>`).join('');
+$('#timeline').innerHTML = ME.journey.map(([d,h,p,c]) => `<div class="ti rv"><div class="d">${d}</div><h3>${h}</h3><p>${p}</p>${c ? `<div class="chips ti-chips">${c.map(t => `<span class="chip">${t}</span>`).join('')}</div>` : ''}</div>`).join('');
 $('#socials').innerHTML = ME.socials.map(([n,u]) => `<a ${ext(u)}>${n}</a>`).join('');
 
 /* ---------- terminal ---------- */
